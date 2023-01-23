@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Web Calculator</title>
+  <style>
+    /* CSS for styling the calculator */
+    #calculator {
+      width: 250px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f1f1f1;
+      border-radius: 10px;
+    }
+    #display {
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: right;
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+    button {
+      width: 50px;
+      height: 70px;
+      font-size: 18px;
+      margin: 10px;
+    }
+    .clear-btn:active {
+        background-color: #ff0000; /* red */
+        animation: button-animation 0.5s ease-in-out;
+    }
+      
+    .operator-btn:active {
+        background-color: #0000ff; /* blue */
+        animation: button-animation 0.5s ease-in-out;
+    }
+    @keyframes button-animation {
+        from {
+          transform: scale(1.5);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+      
+  </style>
+</head>
+<body>
+    <div id="calculator">
+        <div id="display"></div>
+        <div class="row">
+            <button id="clear" class="clear-btn">C</button>
+            <button id="divide" class="operator-btn">/</button>
+            <button id="multiply" class="operator-btn">*</button>
+            <button id="subtract" class="operator-btn">-</button>
+            <button id="add" class="operator-btn">+</button>
+        </div>
+        <div class="row">
+            <button id="seven">7</button>
+            <button id="eight">8</button>
+            <button id="nine">9</button>
+        </div>
+        <div class="row">
+            <button id="four">4</button>
+            <button id="five">5</button>
+            <button id="six">6</button>
+        </div>
+        <div class="row">
+            <button id="one">1</button>
+            <button id="two">2</button>
+            <button id="three">3</button>
+        </div>
+        <div class="row">
+            <button id="zero">0</button>
+            <button id="decimal">.</button>
+            <button id="equals" class="operator-btn">=</button>
+        </div>
+    </div>
+    
+  <script>
+    const calculator = document.getElementById('calculator');
+    const display = document.querySelector('#display');
+    let firstValue = 0;
+    let operator = '';
+    let awaitingNextValue = false;
+
+    const clearButton = document.querySelector('.clear-btn');
+
+    clearButton.addEventListener('mousedown', () => {
+        clearButton.classList.add('active');
+    });
+
+    clearButton.addEventListener('mouseup', () => {
+        clearButton.classList.remove('active');
+    });
+    
+    const operatorButtons = document.querySelectorAll('.operator-btn');
+
+    operatorButtons.forEach(button => {
+    button.addEventListener('mousedown', () => {
+    button.classList.add('active');
+    });
+
+    button.addEventListener('mouseup', () => {
+        button.classList.remove('active');
+        });
+    });
+
+    calculator.addEventListener('click', function(event) {
+        const target = event.target;
+        const value = target.innerText;
+        if (target.matches('button')) {
+          if (value === 'C') {
+            firstValue = 0;
+            operator = '';
+            display.innerText = '';
+          } else if (['+', '-', '*', '/'].indexOf(value) !== -1) {
+            operator = value;
+            firstValue = parseFloat(display.innerText);
+            display.innerText = '';
+          } else if (value === '.') {
+            if (!display.innerText.includes('.')) {
+              display.innerText += value;
+            }
+          } else if (value === '=') {
+            if (operator === '') {
+              return;
+            }
+            const secondValue = parseFloat(display.innerText);
+            switch (operator) {
+              case '+':
+                firstValue += secondValue;
+                break;
+              case '-':
+                firstValue -= secondValue;
+                break;
+              case '*':
+                firstValue *= secondValue;
+                break;
+              case '/':
+                if (secondValue === 0) {
+                  display.innerText = "Cannot divide by zero";
+                  return;
+                }
+                firstValue /= secondValue;
+                break;
+              default:
+                return;
+            }
+            display.innerText = firstValue;
+          } else {
+            if (awaitingNextValue) {
+              display.innerText = '';
+              awaitingNextValue = false;
+            }
+            display.innerText += value;
+          }
+        }
+      });
+      
+  </script>
+
+</body>
+</html>
